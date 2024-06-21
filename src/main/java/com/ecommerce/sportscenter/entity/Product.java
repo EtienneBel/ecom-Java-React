@@ -21,8 +21,8 @@ public class Product {
     @Column(name = "Name")
     private String name;
 
-    @Column(name = "Decription")
-    private String decription;
+    @Column(name = "Description")
+    private String description;
 
     @Column(name = "Price")
     private Long price;

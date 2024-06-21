@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 public class ProductResponse {
     private Integer id;
     private String name;
-    private String decription;
+    private String description;
     private Long price;
     private String pictureUrl;
-    private Brand brand;
-    private Type type;
+    private String productBrand;
+    private String productType;
 }

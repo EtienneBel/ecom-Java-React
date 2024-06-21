@@ -5,6 +5,6 @@ import com.ecommerce.sportscenter.model.ProductResponse;
 import java.util.List;
 
 public interface ProductService {
-    ProductResponse getProductById();
+    ProductResponse getProductById(Integer productId);
     List<ProductResponse> getProducts();
 }
