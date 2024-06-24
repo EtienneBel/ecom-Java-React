@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -22,8 +23,20 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> product = Optional.ofNullable(productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Prodcut with Id: {} not found")));
          ProductResponse productResponse = convertToProductResponse(product.get());
-        log.info("Fetching Product by Id: {}", productId);
+
+         log.info("Fetching Product by Id: {}", productId);
         return productResponse;
+    }
+
+    @Override
+    public List<ProductResponse> getProducts() {
+        log.info("Fetching all products");
+        List<Product> products = productRepository.findAll();
+        List<ProductResponse> productResponses = products.stream()
+                .map(this::convertToProductResponse)
+                .collect(Collectors.toList());
+        log.info("Fetching all products");
+        return productResponses;
     }
 
     private ProductResponse convertToProductResponse(Product product) {
@@ -38,8 +51,4 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
-    @Override
-    public List<ProductResponse> getProducts() {
-        return List.of();
-    }
 }

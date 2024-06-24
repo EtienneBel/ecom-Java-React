@@ -21,7 +21,7 @@ public class Product {
     @Column(name = "Name")
     private String name;
 
-    @Column(name = "Description")
+    @Column(name = "Description", columnDefinition = "longtext")
     private String description;
 
     @Column(name = "Price")
@@ -35,6 +35,6 @@ public class Product {
     private Brand brand;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ProductTydId", referencedColumnName = "Id")
+    @JoinColumn(name = "ProductTypeId", referencedColumnName = "Id")
     private Type type;
 }
