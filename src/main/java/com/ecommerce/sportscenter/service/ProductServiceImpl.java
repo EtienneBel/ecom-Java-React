@@ -25,24 +25,29 @@ public class ProductServiceImpl implements ProductService {
         log.info("Fetching Product by Id: {}", productId);
         Optional<Product> product = Optional.ofNullable(productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Prodcut with Id: {} not found")));
-         ProductResponse productResponse = convertToProductResponse(product.get());
+        ProductResponse productResponse = convertToProductResponse(product.get());
 
-         log.info("Fetching Product by Id: {}", productId);
+        log.info("Fetching Product by Id: {}", productId);
         return productResponse;
     }
 
     @Override
     public Page<ProductResponse> getProducts(Pageable pageable, Integer brandId, Integer typeId, String keyword) {
         log.info("Fetching all products");
+
         Specification<Product> spec = Specification.where(null);
-        if(brandId!=null){
-            spec = spec.and((root, query, criteriaBuilder)-> criteriaBuilder.equal(root.get("brand").get("id"), brandId));
+        if (brandId != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("brand").get("id"), brandId));
         }
-        Page<Product> productPage = productRepository.findAll(pageable);
-        Page<ProductResponse> productResponses = productPage
-                .map(this::convertToProductResponse);
-        log.info("Products fetched");
-        return productResponses;
+        if (typeId != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("type").get("id"), typeId));
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("name"), "%" + keyword + "%"));
+        }
+
+        log.info("Fetched products !!!");
+        return productRepository.findAll(spec, pageable).map(this::convertToProductResponse);
     }
 
     private ProductResponse convertToProductResponse(Product product) {
