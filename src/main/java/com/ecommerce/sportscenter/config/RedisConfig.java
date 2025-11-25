@@ -1,7 +1,9 @@
 package com.ecommerce.sportscenter.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -58,12 +60,22 @@ public class RedisConfig {
     /**
      * ObjectMapper personnalisé pour Redis
      * Support des dates Java 8+ (LocalDateTime, etc.)
+     * Enables type information for proper deserialization
      */
     @Bean
     public ObjectMapper redisObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        // Enable default typing to preserve type information during serialization
+        // This ensures objects are deserialized back to their correct types (not LinkedHashMap)
+        mapper.activateDefaultTyping(
+                LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY
+        );
+
         return mapper;
     }
 
@@ -72,17 +84,14 @@ public class RedisConfig {
      * Utilisé pour des opérations custom (distributed locks, counters, etc.)
      */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(
-            RedisConnectionFactory connectionFactory,
-            ObjectMapper redisObjectMapper) {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
 
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        // Sérialisation
+        // Sérialisation with custom ObjectMapper for type info + Java 8 time support
         StringRedisSerializer stringSerializer = new StringRedisSerializer();
-        GenericJackson2JsonRedisSerializer jsonSerializer =
-                new GenericJackson2JsonRedisSerializer(redisObjectMapper);
+        GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper());
 
         template.setKeySerializer(stringSerializer);
         template.setValueSerializer(jsonSerializer);
@@ -125,11 +134,9 @@ public class RedisConfig {
      */
     @Bean
     @Primary
-    public CacheManager redisCacheManager(
-            RedisConnectionFactory connectionFactory,
-            ObjectMapper redisObjectMapper) {
+    public CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
 
-        // Configuration par défaut
+        // Configuration par défaut - use custom ObjectMapper for type info + Java 8 time support
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration
                 .defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))
@@ -138,7 +145,7 @@ public class RedisConfig {
                                 .fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair
-                                .fromSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper)))
+                                .fromSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper())))
                 .disableCachingNullValues();
 
         // Configurations spécifiques par cache
@@ -167,7 +174,7 @@ public class RedisConfig {
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(defaultConfig)
                 .withInitialCacheConfigurations(cacheConfigurations)
-                .transactionAware()
+                .enableStatistics()
                 .build();
     }
 

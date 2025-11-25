@@ -65,11 +65,11 @@ start_services() {
     docker-compose up -d
 
     # Wait for services to be ready
-    echo "Waiting for PostgreSQL..."
-    until docker-compose exec -T postgres pg_isready -U postgres &> /dev/null; do
+    echo "Waiting for MySQL..."
+    until docker-compose exec -T mysql mysqladmin ping -h localhost -u root -prootpassword --silent &> /dev/null; do
         sleep 1
     done
-    echo -e "${GREEN}✅ PostgreSQL ready${NC}"
+    echo -e "${GREEN}✅ MySQL ready${NC}"
 
     echo "Waiting for Redis..."
     until docker-compose exec -T redis redis-cli ping &> /dev/null; do

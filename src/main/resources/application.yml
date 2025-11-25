@@ -46,11 +46,12 @@ spring:
           min-idle: 2
           max-wait: -1ms
 
-  # Cache Configuration
+  # Cache Configuration - use custom CacheManagers
   cache:
     type: redis
     redis:
       time-to-live: 600000 # 10 minutes default
+      enable-statistics: true
 
 # Redisson Configuration
 redisson:
@@ -90,7 +91,8 @@ logging:
   level:
     root: INFO
     com.ecommerce: DEBUG
-    org.springframework.cache: DEBUG
+    org.springframework.cache: TRACE
+    org.springframework.cache.interceptor: TRACE
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
   pattern:
@@ -105,5 +107,5 @@ app:
     redis:
       default-ttl: 10m
   warming:
-    enabled: true
+    enabled: false
     top-products-limit: 100

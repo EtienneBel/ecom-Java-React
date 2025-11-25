@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.ecommerce.sportscenter.dto.ProductDTO.*;
-
 /**
  * CacheWarmingService - Pre-populate caches at startup
  *
@@ -50,11 +48,6 @@ public class CacheWarmingService {
     private final ProductRepository productRepository;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public CacheWarmingService(ProductRepository productRepository, RedisTemplate<String, Object> redisTemplate) {
-        this.productRepository = productRepository;
-        this.redisTemplate = redisTemplate;
-    }
-
     /**
      * WARM CACHE ON STARTUP
      *
@@ -63,6 +56,9 @@ public class CacheWarmingService {
      */
     @EventListener(ApplicationReadyEvent.class)
     public void warmCacheOnStartup() {
+        log.info("Cache warming is disabled - skipping");
+        return;
+        /*
         log.info("Starting cache warming...");
         long startTime = System.currentTimeMillis();
 
@@ -83,6 +79,7 @@ public class CacheWarmingService {
             log.error("Cache warming failed", e);
             // Don't fail startup - continue with cold cache
         }
+        */
     }
 
     /**

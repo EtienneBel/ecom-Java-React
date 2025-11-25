@@ -2,6 +2,7 @@ package com.ecommerce.sportscenter.service;
 
 import com.ecommerce.sportscenter.dto.ProductDTO;
 import com.ecommerce.sportscenter.entity.Product;
+import com.ecommerce.sportscenter.exception.ProductNotFoundException;
 import com.ecommerce.sportscenter.repository.ProductRepository;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -50,13 +51,6 @@ public class ProductService {
     private Counter cacheMissCounter;
     private Counter databaseQueryCounter;
 
-    public ProductService(ProductRepository productRepository, RedisTemplate<String, Object> redisTemplate, RedissonClient redissonClient, MeterRegistry meterRegistry) {
-        this.productRepository = productRepository;
-        this.redisTemplate = redisTemplate;
-        this.redissonClient = redissonClient;
-        this.meterRegistry = meterRegistry;
-    }
-
     /**
      * POST-CONSTRUCT: Initialize metrics
      */
@@ -96,12 +90,12 @@ public class ProductService {
     public ProductDTO getProductById(Long id) {
         Timer.Sample sample = Timer.start(meterRegistry);
 
-        log.info("🔍 Fetching product {} - Missed all caches, querying DB", id);
+        log.info(" Fetching product {} - Missed all caches, querying DB", id);
         cacheMissCounter.increment();
         databaseQueryCounter.increment();
 
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found: " + id));
+                .orElseThrow(() -> new ProductNotFoundException(id));
 
         ProductDTO dto = convertToDTO(product);
         dto.setCacheSource("DATABASE");
@@ -177,7 +171,7 @@ public class ProductService {
     @Cacheable(value = "products", cacheManager = "redisCacheManager")
     @Transactional(readOnly = true)
     public List<ProductDTO> getAllProducts() {
-        log.info("🔍 Fetching all products from DB");
+        log.info(" Fetching all products from DB");
         databaseQueryCounter.increment();
 
         return productRepository.findByActiveTrue().stream()
@@ -192,7 +186,7 @@ public class ProductService {
     @Cacheable(value = "products", key = "'category:' + #category", cacheManager = "redisCacheManager")
     @Transactional(readOnly = true)
     public List<ProductDTO> getProductsByCategory(String category) {
-        log.info("🔍 Fetching products for category: {}", category);
+        log.info(" Fetching products for category: {}", category);
         databaseQueryCounter.increment();
 
         return productRepository.findByCategory(category).stream()
@@ -206,7 +200,7 @@ public class ProductService {
     @Cacheable(value = "searchResults", key = "#keyword", cacheManager = "redisCacheManager")
     @Transactional(readOnly = true)
     public List<ProductDTO> searchProducts(String keyword) {
-        log.info("🔍 Searching products with keyword: {}", keyword);
+        log.info(" Searching products with keyword: {}", keyword);
         databaseQueryCounter.increment();
 
         return productRepository.searchProducts(keyword).stream()
@@ -222,7 +216,7 @@ public class ProductService {
             cacheManager = "redisCacheManager")
     @Transactional(readOnly = true)
     public List<ProductDTO> getProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
-        log.info("🔍 Fetching products in price range: {} - {}", minPrice, maxPrice);
+        log.info(" Fetching products in price range: {} - {}", minPrice, maxPrice);
         databaseQueryCounter.increment();
 
         return productRepository.findByPriceRange(minPrice, maxPrice).stream()
@@ -236,7 +230,7 @@ public class ProductService {
     @Cacheable(value = "categories", cacheManager = "redisCacheManager")
     @Transactional(readOnly = true)
     public List<String> getAllCategories() {
-        log.info("🔍 Fetching all categories from DB");
+        log.info(" Fetching all categories from DB");
         databaseQueryCounter.increment();
 
         return productRepository.findAllCategories();
@@ -281,7 +275,7 @@ public class ProductService {
         log.info("🔄 Updating product: {}", id);
 
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found: " + id));
+                .orElseThrow(() -> new ProductNotFoundException(id));
 
         // Update fields
         product.setName(productDTO.getName());
