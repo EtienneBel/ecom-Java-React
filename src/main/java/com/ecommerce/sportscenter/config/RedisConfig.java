@@ -133,7 +133,6 @@ public class RedisConfig {
      * - Données volatiles (search) = TTL court
      */
     @Bean
-    @Primary
     public CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
 
         // Configuration par défaut - use custom ObjectMapper for type info + Java 8 time support

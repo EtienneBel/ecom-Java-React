@@ -85,7 +85,7 @@ public class ProductService {
      * 2. Check Redis (L2) → Hit? Return + Cache in Caffeine
      * 3. Query DB → Cache in Redis + Caffeine
      */
-    @Cacheable(value = "productById", key = "#id", cacheManager = "redisCacheManager")
+    @Cacheable(value = "productById", key = "#id")
     @Transactional(readOnly = true)
     public ProductDTO getProductById(Long id) {
         Timer.Sample sample = Timer.start(meterRegistry);
@@ -168,7 +168,7 @@ public class ProductService {
     /**
      * GET ALL PRODUCTS - Cacheable
      */
-    @Cacheable(value = "products", cacheManager = "redisCacheManager")
+    @Cacheable(value = "products")
     @Transactional(readOnly = true)
     public List<ProductDTO> getAllProducts() {
         log.info(" Fetching all products from DB");
@@ -183,7 +183,7 @@ public class ProductService {
      * GET PRODUCTS BY CATEGORY - Cacheable
      * key = "category:#{category}"
      */
-    @Cacheable(value = "products", key = "'category:' + #category", cacheManager = "redisCacheManager")
+    @Cacheable(value = "products", key = "'category:' + #category")
     @Transactional(readOnly = true)
     public List<ProductDTO> getProductsByCategory(String category) {
         log.info(" Fetching products for category: {}", category);
@@ -197,7 +197,7 @@ public class ProductService {
     /**
      * SEARCH PRODUCTS - Short TTL cache
      */
-    @Cacheable(value = "searchResults", key = "#keyword", cacheManager = "redisCacheManager")
+    @Cacheable(value = "searchResults", key = "#keyword")
     @Transactional(readOnly = true)
     public List<ProductDTO> searchProducts(String keyword) {
         log.info(" Searching products with keyword: {}", keyword);
@@ -227,7 +227,7 @@ public class ProductService {
     /**
      * GET ALL CATEGORIES - Long TTL cache
      */
-    @Cacheable(value = "categories", cacheManager = "redisCacheManager")
+    @Cacheable(value = "categories")
     @Transactional(readOnly = true)
     public List<String> getAllCategories() {
         log.info(" Fetching all categories from DB");
