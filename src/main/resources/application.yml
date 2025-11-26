@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ecommerce-cache-solution
+    name: ecommerce-nocache-baseline
 
   # MySQL Configuration
   datasource:
@@ -33,41 +33,12 @@ spring:
         order_inserts: true
         order_updates: true
 
-  # Redis Configuration
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      timeout: 2000ms
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 2
-          max-wait: -1ms
-
-  # Cache Configuration - use custom CacheManagers
-  cache:
-    type: redis
-    redis:
-      time-to-live: 600000 # 10 minutes default
-      enable-statistics: true
-
-# Redisson Configuration
-redisson:
-  address: redis://localhost:6379
-  connection-pool-size: 50
-  connection-minimum-idle-size: 10
-  timeout: 3000
-  retry-attempts: 3
-  retry-interval: 1500
-
 # Actuator Configuration (for Prometheus)
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus,caches
+        include: health,info,metrics,prometheus
       base-path: /actuator
   endpoint:
     health:
@@ -91,21 +62,6 @@ logging:
   level:
     root: INFO
     com.ecommerce: DEBUG
-    org.springframework.cache: TRACE
-    org.springframework.cache.interceptor: TRACE
     org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-
-# Custom Application Properties
-app:
-  cache:
-    caffeine:
-      max-size: 10000
-      expire-after-write: 5m
-    redis:
-      default-ttl: 10m
-  warming:
-    enabled: false
-    top-products-limit: 100

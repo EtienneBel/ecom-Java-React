@@ -14,11 +14,10 @@
 	<artifactId>sportscenter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>sportscenter</name>
-	<description>Sports Center Website</description>
+	<description>Sports Center Website - NO CACHE BASELINE VERSION</description>
 
 	<properties>
 		<java.version>21</java.version>
-        <redisson.version>3.25.0</redisson.version>
     </properties>
 
 	<dependencies>
@@ -32,15 +31,9 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
+        <!-- NO REDIS - Removed for baseline -->
+        <!-- NO CAFFEINE - Removed for baseline -->
+        <!-- NO CACHE - Removed for baseline -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -50,25 +43,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-
-        <!-- Redis -->
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-        </dependency>
-
-        <!-- Redisson for Distributed Locks -->
-        <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
-            <version>${redisson.version}</version>
-        </dependency>
-
-        <!-- Caffeine Cache -->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
         </dependency>
 
         <!-- Micrometer for Prometheus -->
