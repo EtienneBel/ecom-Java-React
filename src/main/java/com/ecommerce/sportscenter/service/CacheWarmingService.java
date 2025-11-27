@@ -51,7 +51,7 @@ public class CacheWarmingService {
 
     public CacheWarmingService(
             ProductRepository productRepository,
-            @Qualifier("twoLevelCacheManager") CacheManager cacheManager) {
+            @Qualifier("compositeCacheManager") CacheManager cacheManager) {
         this.productRepository = productRepository;
         this.cacheManager = cacheManager;
     }
