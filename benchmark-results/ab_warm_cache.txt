@@ -10,33 +10,33 @@ Server Hostname:        localhost
 Server Port:            8080
 
 Document Path:          /api/products/1
-Document Length:        395 bytes
+Document Length:        393 bytes
 
 Concurrency Level:      50
-Time taken for tests:   0.084 seconds
+Time taken for tests:   0.086 seconds
 Complete requests:      1000
 Failed requests:        0
-Total transferred:      500000 bytes
-HTML transferred:       395000 bytes
-Requests per second:    11940.87 [#/sec] (mean)
-Time per request:       4.187 [ms] (mean)
-Time per request:       0.084 [ms] (mean, across all concurrent requests)
-Transfer rate:          5830.50 [Kbytes/sec] received
+Total transferred:      498000 bytes
+HTML transferred:       393000 bytes
+Requests per second:    11694.95 [#/sec] (mean)
+Time per request:       4.275 [ms] (mean)
+Time per request:       0.086 [ms] (mean, across all concurrent requests)
+Transfer rate:          5687.58 [Kbytes/sec] received
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:        0    0   0.4      0       1
-Processing:     0    4   1.2      4       7
-Waiting:        0    4   1.2      4       7
-Total:          0    4   1.1      4       7
+Connect:        0    0   0.3      0       2
+Processing:     1    4   2.5      4      12
+Waiting:        0    4   2.5      4      12
+Total:          1    4   2.5      4      13
 
 Percentage of the requests served within a certain time (ms)
   50%      4
   66%      5
-  75%      5
-  80%      5
-  90%      5
-  95%      6
-  98%      6
-  99%      7
- 100%      7 (longest request)
+  75%      6
+  80%      6
+  90%      8
+  95%      9
+  98%     10
+  99%     11
+ 100%     13 (longest request)

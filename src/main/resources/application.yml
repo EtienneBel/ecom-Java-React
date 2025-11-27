@@ -107,5 +107,5 @@ app:
     redis:
       default-ttl: 10m
   warming:
-    enabled: false
+    enabled: true
     top-products-limit: 100
